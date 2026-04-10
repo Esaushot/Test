@@ -1,0 +1,157 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+<div class="card mb-4 bg-light">
+    <div class="card-body">
+        <h5><i class="bi bi-file-earmark-arrow-up"></i> Pre-validación de Documentos</h5>
+        <form action="/subir_documentos" method="POST" enctype="multipart/form-data" class="row g-2">
+            <div class="col-md-4">
+                <label class="x-small">Certificado (PDF)</label>
+                <input type="file" name="certificado" class="form-control form-control-sm">
+            </div>
+            <div class="col-md-4">
+                <label class="x-small">CURP (PDF)</label>
+                <input type="file" name="curp" class="form-control form-control-sm">
+            </div>
+            <div class="col-md-4">
+                <label class="x-small">Acta de Nacimiento (PDF)</label>
+                <input type="file" name="acta" class="form-control form-control-sm">
+            </div>
+
+            <div class="col-md-4">
+                <label class="x-small">Comprobante de Domicilio (PDF)</label>
+                <input type="file" name="domicilio" class="form-control form-control-sm">
+            </div>
+            <div class="col-md-4">
+                <label class="x-small">Foto Tamaño Infantil (JPG/PNG)</label>
+                <input type="file" name="foto_infantil" class="form-control form-control-sm">
+            </div>
+            <div class="col-md-4">
+                <label class="x-small">INE Alumno (PDF/Imagen)</label>
+                <input type="file" name="ine_alumno" class="form-control form-control-sm">
+            </div>
+
+            <div class="col-md-4">
+                <label class="x-small">INE Tutor (PDF/Imagen)</label>
+                <input type="file" name="ine_tutor" class="form-control form-control-sm">
+            </div>
+            <div class="col-md-4">
+                <label class="x-small">Tipo de Sangre</label>
+                <input type="text" name="tipo_sangre" class="form-control form-control-sm" placeholder="O+">
+            </div>
+            <div class="col-md-4 d-flex align-items-end">
+                <button type="submit" class="btn btn-sm btn-dark w-100">Guardar Expediente</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="alert alert-info shadow-sm">
+    <h5 class="mb-0"><i class="bi bi-mortarboard"></i> Cursando el <strong>{{ cuatrimestre_actual }}º Cuatrimestre</strong></h5>
+</div>
+
+<div class="card mb-4 shadow-sm">
+    <div class="card-header bg-dark text-white">
+        <h6 class="mb-0"><i class="bi bi-journal-check"></i> Historial Académico (Kárdex)</h6>
+    </div>
+    <div class="card-body p-0">
+        <table class="table table-hover mb-0 text-center small">
+            <thead class="table-light">
+                <tr>
+                    <th>Cuatrimestre</th>
+                    <th class="text-start">Materia</th>
+                    <th>Calificación Final</th>
+                    <th>Estatus</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for m in historial %}
+                <tr>
+                    <td>{{ m.cuatrimestre }}º</td>
+                    <td class="text-start fw-bold">{{ m.nombre_materia }}</td>
+                    <td>
+                        {% if m.calificacion %}
+                            <span class="badge {% if m.calificacion >= 7 %}bg-success{% else %}bg-danger{% endif %} fs-6">
+                                {{ m.calificacion }}
+                            </span>
+                        {% else %}
+                            <span class="text-muted">En curso</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if m.cuatrimestre < cuatrimestre_actual %}
+                            <span class="text-success"><i class="bi bi-check-circle-fill"></i> Concluida</span>
+                        {% else %}
+                            <span class="text-primary"><i class="bi bi-play-circle-fill"></i> Activa</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="4" class="text-muted py-3">Aún no tienes historial académico.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <h3>Materias Ofertadas</h3>
+        <table class="table table-hover border">
+            <thead class="table-light">
+                <tr>
+                    <th>Materia</th><th>Docente</th><th>Horario</th><th>Cupo</th><th>Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for m in oferta %}
+                <tr>
+                    <td>{{ m.nombre_materia }}</td>
+                    <td>{{ m.docente }}</td>
+                    <td>{{ m.dia }}: {{ m.hora_inicio }} - {{ m.hora_fin }}</td>
+                    <td>{{ m.cupo_max - m.cupo_actual }} libres</td>
+                    <td><a href="/inscribir/{{ m.id }}" class="btn btn-sm btn-primary">Inscribir</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Mi Horario Generado</h5>
+                <ul class="list-group list-group-flush">
+                    {% for m in inscritas %}
+                    <li class="list-group-item small">{{ m.nombre_materia }} <br> <span class="text-muted">{{ m.dia }} {{ m.hora_inicio }}</span></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <table class="table table-bordered text-center small">
+            <thead class="table-dark">
+                <tr>
+                    <th>Lunes</th><th>Martes</th><th>Miércoles</th><th>Jueves</th><th>Viernes</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    {% for dia in ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'] %}
+                    <td style="width: 20%; background: #f9f9f9; min-height: 80px; vertical-align: top;">
+                        {% for clase in horario_semanal[dia] %}
+                        <div class="p-1 mb-1 bg-info text-white rounded shadow-sm" style="font-size: 0.65rem;">
+                            <strong>{{ clase.nombre_materia }}</strong><br>{{ clase.hora_inicio }}
+                        </div>
+                        {% endfor %}
+                    </td>
+                    {% endfor %}
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

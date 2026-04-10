@@ -1,0 +1,164 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="card shadow mb-4 border-primary">
+        <div class="card-header bg-light">
+            <h5 class="mb-0 text-primary">➕ Registrar Nuevo Perfil</h5>
+        </div>
+        <div class="card-body">
+            <form action="/admin/crear_usuario" method="POST" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label small">Nombre Completo</label>
+                    <input type="text" name="nombre" class="form-control form-control-sm" placeholder="Ej: Juan Pérez" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small">Correo Institucional</label>
+                    <input type="email" name="correo" class="form-control form-control-sm" placeholder="usuario@uptis.edu.mx" required>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small">Contraseña Inicial</label>
+                    <input type="password" name="password" class="form-control form-control-sm" required>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small">Rol del Usuario</label>
+                    <select name="rol" class="form-select form-select-sm">
+                        <option value="alumno">Alumno</option>
+                        <option value="docente">Docente</option>
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary btn-sm w-100">Crear Perfil</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">Gestión Universitaria - Perfil Administrativo</h4>
+            <span>Bienvenido, <strong>{{ session['nombre'] }}</strong> | <a href="/logout" class="text-white">Cerrar Sesión</a></span>
+        </div>
+        
+        <div class="card-body">
+            {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                {% for message in messages %}
+                  <div class="alert alert-info alert-dismissible fade show py-2" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+
+            <form action="/admin" method="GET" class="row g-3 mb-4">
+                <div class="col-md-10">
+                    <input type="text" name="search" class="form-control" placeholder="Buscar por nombre o correo institucional..." value="{{ query }}">
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-dark w-100">🔍 Buscar</button>
+                </div>
+            </form>
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle" style="font-size: 0.85rem;">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Usuario</th>
+                            <th>Rol</th>
+                            <th>Estado de Documentos</th>
+                            <th class="text-center">Visualizar</th>
+                            <th>Acción (Actualizar Archivos)</th>
+                            <th class="text-center">Eliminar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in usuarios %}
+                        <tr>
+                            <td><span class="badge bg-dark">#{{ loop.index }}</span></td>
+                            <td>
+                                <strong>{{ user.nombre }}</strong><br>
+                                <small class="text-muted">{{ user.correo }}</small>
+                            </td>
+                            <td>
+                                <span class="badge {{ 'bg-info' if user.rol == 'alumno' else 'bg-warning text-dark' }}">
+                                    {{ user.rol.upper() }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="small">
+                                    Cert: {{ '✅' if user.certificado_url else '❌' }} | CURP: {{ '✅' if user.curp_url else '❌' }}<br>
+                                    Acta: {{ '✅' if user.acta_url else '❌' }} | Dom: {{ '✅' if user.domicilio_url else '❌' }}<br>
+                                    Foto: {{ '✅' if user.foto_infantil_url else '❌' }} | INE: {{ '✅' if user.ine_alumno_url else '❌' }}<br>
+                                    Tutor: {{ '✅' if user.ine_tutor_url else '❌' }}
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="btn-group-vertical btn-group-sm">
+                                    {% if user.certificado_url %}<a href="{{ url_for('static', filename='uploads/' + user.certificado_url) }}" target="_blank" class="btn btn-outline-info py-0">Cert</a>{% endif %}
+                                    {% if user.curp_url %}<a href="{{ url_for('static', filename='uploads/' + user.curp_url) }}" target="_blank" class="btn btn-outline-info py-0">CURP</a>{% endif %}
+                                    {% if user.acta_url %}<a href="{{ url_for('static', filename='uploads/' + user.acta_url) }}" target="_blank" class="btn btn-outline-info py-0">Acta</a>{% endif %}
+                                    {% if user.domicilio_url %}<a href="{{ url_for('static', filename='uploads/' + user.domicilio_url) }}" target="_blank" class="btn btn-outline-info py-0">Dom</a>{% endif %}
+                                    {% if user.foto_infantil_url %}<a href="{{ url_for('static', filename='uploads/' + user.foto_infantil_url) }}" target="_blank" class="btn btn-outline-info py-0">Foto</a>{% endif %}
+                                    {% if user.ine_alumno_url %}<a href="{{ url_for('static', filename='uploads/' + user.ine_alumno_url) }}" target="_blank" class="btn btn-outline-info py-0">INE A.</a>{% endif %}
+                                    {% if user.ine_tutor_url %}<a href="{{ url_for('static', filename='uploads/' + user.ine_tutor_url) }}" target="_blank" class="btn btn-outline-info py-0">INE T.</a>{% endif %}
+                                </div>
+                            </td>
+                            <td>
+                                <form action="/subir_documentos" method="POST" enctype="multipart/form-data" class="row g-1">
+                                    <input type="hidden" name="usuario_id" value="{{ user.id }}">
+                                    <div class="col-12 mb-1">
+                                        <input type="text" name="tipo_sangre" class="form-control form-control-sm" placeholder="Sangre" value="{{ user.tipo_sangre or '' }}">
+                                    </div>
+                                    <div class="col-6">
+                                        <select class="form-select form-select-sm mb-1" onchange="this.nextElementSibling.name=this.value">
+                                            <option value="">Elegir archivo...</option>
+                                            <option value="certificado">Certificado</option>
+                                            <option value="curp">CURP</option>
+                                            <option value="acta">Acta</option>
+                                            <option value="domicilio">Domicilio</option>
+                                            <option value="foto_infantil">Foto</option>
+                                            <option value="ine_alumno">INE Alumno</option>
+                                            <option value="ine_tutor">INE Tutor</option>
+                                        </select>
+                                        <input type="file" class="form-control form-control-sm">
+                                    </div>
+                                    <div class="col-6 d-flex align-items-end">
+                                        <button type="submit" class="btn btn-success btn-sm w-100">Subir</button>
+                                    </div>
+                                </form>
+                            </td>
+                            <td class="text-center">
+                                {% if user.rol == 'alumno' %}
+                                <a href="{{ url_for('avanzar_cuatrimestre', alumno_id=user.id) }}" 
+                                   class="btn btn-outline-success btn-sm me-1 mb-1"
+                                   onclick="return confirm('¿Avanzar a este alumno al siguiente cuatrimestre? Sus materias actuales quedarán archivadas en su kárdex.')">
+                                    <i class="bi bi-arrow-up-circle"></i> Promover ({{ user.cuatrimestre }}º -> {{ user.cuatrimestre + 1 }}º)
+                                </a>
+                                {% endif %}
+                                
+                                {% if user.id != session['user_id'] %}
+                                <a href="{{ url_for('borrar_usuario', usuario_id=user.id) }}" 
+                                   class="btn btn-outline-danger btn-sm" 
+                                   onclick="return confirm('¿Estás seguro de eliminar permanentemente a este usuario? Esta acción borrará también sus inscripciones y materias.')">
+                                    🗑️ Borrar
+                                </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center text-muted">No se encontraron resultados para "{{ query }}".</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer text-center small text-muted">
+            Universidad Politécnica y Tecnológica del Istmo de Tehuantepec
+        </div>
+    </div>
+</div>
+{% endblock %}

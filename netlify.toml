@@ -1,0 +1,5 @@
+[build]
+  # Comando para instalar dependencias y ejecutar tu seed
+  command = "pip install -r requirements.txt && python seed.py && npm run build"
+  # La carpeta donde está tu index.html final
+  publish = "dist"

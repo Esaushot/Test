@@ -1,0 +1,66 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h4 class="mb-0"><i class="bi bi-journal-text"></i> Examen Diagnóstico</h4>
+                {% if session.rol in ['admin', 'docente'] %}
+                    <a href="/examen/resultados" class="btn btn-light btn-sm"><i class="bi bi-eye"></i> Ver Resultados de Alumnos</a>
+                {% endif %}
+            </div>
+            <div class="card-body">
+                
+                {% if session.rol in ['admin', 'docente'] %}
+                                        <h5 class="mb-3">Gestionar Preguntas</h5>
+                    <form action="/examen/agregar_pregunta" method="POST" class="mb-4">
+                        <div class="input-group">
+                            <input type="text" name="pregunta" class="form-control" placeholder="Escribe una nueva pregunta..." required>
+                            <button type="submit" class="btn btn-success"><i class="bi bi-plus-circle"></i> Agregar</button>
+                        </div>
+                    </form>
+
+                    {% if preguntas %}
+                        <ul class="list-group">
+                            {% for p in preguntas %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                {{ p.pregunta }}
+                                <a href="/examen/borrar_pregunta/{{ p.id }}" class="btn btn-sm btn-danger" onclick="return confirm('¿Seguro que deseas borrar esta pregunta?');"><i class="bi bi-trash"></i></a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted">Aún no hay preguntas en el examen.</p>
+                    {% endif %}
+
+                {% elif session.rol == 'alumno' %}
+                                        {% if ya_respondio %}
+                        <div class="text-center py-5">
+                            <i class="bi bi-check-circle text-success" style="font-size: 4rem;"></i>
+                            <h3 class="mt-3">Examen hecho</h3>
+                            <p class="text-muted">Ya has completado tu examen diagnóstico. Tus respuestas han sido guardadas.</p>
+                            <a href="/alumno" class="btn btn-primary mt-2">Volver a mi panel</a>
+                        </div>
+                    {% else %}
+                        {% if preguntas %}
+                            <p class="text-muted mb-4">Por favor, responde honestamente a las siguientes preguntas.</p>
+                            <form action="/examen" method="POST">
+                                {% for p in preguntas %}
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold">{{ loop.index }}. {{ p.pregunta }}</label>
+                                    <textarea name="pregunta_{{ p.id }}" class="form-control" rows="2" required></textarea>
+                                </div>
+                                {% endfor %}
+                                <button type="submit" class="btn btn-primary w-100"><i class="bi bi-send"></i> Enviar Respuestas</button>
+                            </form>
+                        {% else %}
+                            <div class="alert alert-info">Aún no hay preguntas asignadas para el examen diagnóstico.</div>
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

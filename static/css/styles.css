@@ -1,0 +1,128 @@
+/* Variables de Identidad UPTIS */
+:root {
+    --uptis-guinda: #6a1b1b;
+    --uptis-guinda-light: #8b2a2a;
+    --uptis-oro: #b8860b;
+    --uptis-oro-light: #e0ac2e;
+    --blanco-puro: #ffffff;
+    --gris-fondo: #f4f7f6;
+    --texto-oscuro: #2d2d2d;
+    --sombra: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* General */
+body {
+    background-color: var(--gris-fondo);
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    color: var(--texto-oscuro);
+    line-height: 1.6;
+}
+
+/* Navbar Personalizada */
+.navbar {
+    background: linear-gradient(90deg, var(--uptis-guinda) 0%, #4a1212 100%) !important;
+    border-bottom: 4px solid var(--uptis-oro) !important;
+    padding: 0.8rem 1rem;
+}
+
+.navbar-brand {
+    font-weight: 800 !important;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* Tarjetas (Cards) Estilo Institucional */
+.card {
+    border: none !important;
+    border-radius: 12px !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: var(--sombra);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+    border-top-left-radius: 12px !important;
+    border-top-right-radius: 12px !important;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.bg-primary {
+    background-color: var(--uptis-guinda) !important;
+}
+
+/* Botones con Efecto UPTIS */
+.btn-primary {
+    background-color: var(--uptis-guinda);
+    border: 2px solid transparent;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 8px 20px;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: transparent;
+    color: var(--uptis-guinda);
+    border-color: var(--uptis-guinda);
+}
+
+.btn-outline-primary {
+    color: var(--uptis-guinda);
+    border-color: var(--uptis-guinda);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--uptis-guinda);
+    border-color: var(--uptis-guinda);
+}
+
+/* Tablas Modernas */
+.table {
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.table thead {
+    background-color: var(--uptis-guinda);
+    color: white;
+}
+
+/* Badges y Etiquetas */
+.badge {
+    padding: 0.5em 0.8em;
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+.bg-oro {
+    background-color: var(--uptis-oro) !important;
+    color: white;
+}
+
+/* Inputs y Formularios */
+.form-control:focus {
+    border-color: var(--uptis-oro);
+    box-shadow: 0 0 0 0.25rem rgba(184, 134, 11, 0.25);
+}
+
+/* Footer o Textos Pequeños */
+.text-muted-uptis {
+    color: #6c757d;
+    font-size: 0.85rem;
+    border-top: 1px solid #dee2e6;
+    padding-top: 10px;
+}
+
+/* Ajustes para el Login */
+.login-container {
+    height: 80vh;
+    display: flex;
+    align-items: center;
+}
